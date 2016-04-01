@@ -74,6 +74,7 @@ EM_UNDERLINE_RE = r'\*(.*?)__(.+?)__(.*?)\*'
 # __ul*em*ul__
 UNDERLINE_EM_RE = r'__(.*?)\*(.+?)\*(.*?)__'
 
+
 class SingleTagWithClassPattern(SimpleTagPattern):
 
     def __init__(self, pattern, tag, cls=None):
@@ -138,13 +139,25 @@ class UnderlineExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         # Create the del pattern
-        underline = SingleTagWithClassPattern(UNDERLINE_RE, self.getConfig('tag'), self.getConfig('cls'))
-        em_underline = EmUnderlinePattern(EM_UNDERLINE_RE, self.getConfig('tag'), self.getConfig('cls'), outside=False)
-        underline_em = EmUnderlinePattern(UNDERLINE_EM_RE, self.getConfig('tag'), self.getConfig('cls'), outside=True)
+        underline = SingleTagWithClassPattern(
+            UNDERLINE_RE, self.getConfig('tag'), self.getConfig('cls'))
+        em_underline = EmUnderlinePattern(
+            EM_UNDERLINE_RE,
+            self.getConfig('tag'),
+            self.getConfig('cls'), outside=False)
+        underline_em = EmUnderlinePattern(
+            UNDERLINE_EM_RE,
+            self.getConfig('tag'),
+            self.getConfig('cls'), outside=True)
         # Insert del pattern into markdown parser
         md.inlinePatterns.add('em_underline', em_underline, '>not_strong')
         md.inlinePatterns.add('underline_em', underline_em, '>not_strong')
         md.inlinePatterns.add('underline', underline, '>not_strong')
+
+
+def makeExtension(*args, **kwargs):
+    return UnderlineExtension(*args, **kwargs)
+
 
 if __name__ == '__main__':
     import markdown
@@ -167,6 +180,3 @@ if __name__ == '__main__':
         print(markdown.markdown(source, extensions=[UnderlineExtension()]))
         print(markdown.markdown(source, extensions=[
             UnderlineExtension(tag='b', cls='underline')]))
-
-
-
